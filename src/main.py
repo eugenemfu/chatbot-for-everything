@@ -10,25 +10,26 @@ def main():
     dispatcher = updater.dispatcher
 
     handlers = {
-        BOT_STATE.INTRO: IntroHandler(),
-        BOT_STATE.DOMAIN_RECOGNITION: DomainHandler(),
-        BOT_STATE.WEATHER: WeatherHandler(),
-        BOT_STATE.KIRILL_DOMAIN: KirillHandler(),
-        BOT_STATE.DASHA_DOMAIN: DashaHandler(),
+        BOT_STATE.INTRO.value: IntroHandler(),
+        BOT_STATE.WEATHER.value: WeatherHandler(),
+        BOT_STATE.KIRILL_DOMAIN.value: KirillHandler(),
+        BOT_STATE.DASHA_DOMAIN.value: DashaHandler(),
     }
+    domain_handler = DomainHandler(handlers)
+    handlers[BOT_STATE.DOMAIN_RECOGNITION.value] = domain_handler
 
     states = {
-        BOT_STATE.INTRO: [MessageHandler(Filters.text, handlers[BOT_STATE.INTRO])],
-        BOT_STATE.DOMAIN_RECOGNITION: [MessageHandler(Filters.text, handlers[BOT_STATE.DOMAIN_RECOGNITION])],
-        BOT_STATE.WEATHER: [MessageHandler(Filters.text, handlers[BOT_STATE.WEATHER])],
-        BOT_STATE.KIRILL_DOMAIN: [MessageHandler(Filters.text, handlers[BOT_STATE.KIRILL_DOMAIN])],
-        BOT_STATE.DASHA_DOMAIN: [MessageHandler(Filters.text, handlers[BOT_STATE.DASHA_DOMAIN])],
+        BOT_STATE.INTRO: [MessageHandler(Filters.text, handlers[BOT_STATE.INTRO.value])],
+        BOT_STATE.DOMAIN_RECOGNITION: [MessageHandler(Filters.text, handlers[BOT_STATE.DOMAIN_RECOGNITION.value])],
+        BOT_STATE.WEATHER: [MessageHandler(Filters.text, handlers[BOT_STATE.WEATHER.value])],
+        BOT_STATE.KIRILL_DOMAIN: [MessageHandler(Filters.text, handlers[BOT_STATE.KIRILL_DOMAIN.value])],
+        BOT_STATE.DASHA_DOMAIN: [MessageHandler(Filters.text, handlers[BOT_STATE.DASHA_DOMAIN.value])],
     }
 
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("start", handlers[BOT_STATE.INTRO])],
+        entry_points=[CommandHandler("start", handlers[BOT_STATE.INTRO.value])],
         states=states,
-        fallbacks=[CommandHandler("start", handlers[BOT_STATE.INTRO])],
+        fallbacks=[CommandHandler("start", handlers[BOT_STATE.INTRO.value])],
     )
 
     dispatcher.add_handler(conv_handler)

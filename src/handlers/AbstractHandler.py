@@ -10,6 +10,7 @@ class StateHandler(metaclass=abc.ABCMeta):
     """
     Abstract class for all the handlers.
     """
+
     def __init__(self, state_id: int):
         self.state_id = state_id
 
