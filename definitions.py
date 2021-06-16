@@ -2,7 +2,7 @@ import os
 from enum import Enum, unique
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-TELEGRAM_TOKEN = "1753906220:AAFkY3dCToWvnVZIh_wvAub8jaG5eYi3FN8"
+TELEGRAM_TOKEN = "1886759359:AAEk68CWKWjJ_MOw7LnLIEwG4aO-nI71qSY"
 
 
 @unique
