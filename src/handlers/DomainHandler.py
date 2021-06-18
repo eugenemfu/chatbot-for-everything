@@ -14,7 +14,7 @@ class DomainHandler(StateHandler):
                 'погоду',
             ],
             'kirill': [
-                'аудитория',
+                'чгк',
             ],
             'dasha': [
                 'вино',
