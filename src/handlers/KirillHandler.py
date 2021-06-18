@@ -4,7 +4,7 @@ from definitions import BOT_STATE
 
 
 class KirillHandler(StateHandler):
-    def __init__(self, state_id: int = BOT_STATE.KIRILL_DOMAIN):
+    def __init__(self, state_id: int = BOT_STATE.DOMAIN_RECOGNITION):
         super().__init__(state_id)
 
     def generate_answer(self, msg: str) -> Tuple[int, str]:

@@ -44,3 +44,4 @@ class IntroHandler(StateHandler):
 
     def generate_answer(self, msg: str) -> Tuple[int, str]:
         return self.next_state_pos, "Привет! Пока я ничего не знаю, но и Рим не за один день строился."
+
