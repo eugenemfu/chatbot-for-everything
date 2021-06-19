@@ -1,10 +1,13 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
+import pandas as pd
 
-from definitions import TELEGRAM_TOKEN, BOT_STATE
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
+from data import TOKEN_FOLDER
+from definitions import BOT_STATE
 from src.handlers.handlers import IntroHandler, DomainHandler, DashaHandler, KirillHandler, WeatherHandler
 
 
 def main():
+    TELEGRAM_TOKEN = list(pd.read_csv(TOKEN_FOLDER.parent / 'token.csv')['token_id'])[0]
     updater = Updater(TELEGRAM_TOKEN)
 
     dispatcher = updater.dispatcher
