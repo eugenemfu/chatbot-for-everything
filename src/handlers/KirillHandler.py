@@ -68,7 +68,7 @@ class KirillHandler(StateHandler):
             "beam_size": 5,
         }
 
-    def generate_answer(self, msg: str) -> Tuple[int, str]:
+    def generate_answer(self, msg: str, user_id: int) -> Tuple[int, str]:
         if not self.asked_for_context:
             ans = "Хорошо, введите начало вопроса."
             next_state = self.state_id

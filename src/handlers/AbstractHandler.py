@@ -21,16 +21,17 @@ class StateHandler(metaclass=abc.ABCMeta):
         """
         msg = update.message.text
 
-        next_state, ans = self.generate_answer(msg)
+        next_state, ans = self.generate_answer(msg, update.effective_user.id)
 
         update.message.reply_text(ans)
 
         return next_state
 
     @abc.abstractmethod
-    def generate_answer(self, msg: str) -> Tuple[int, str]:
+    def generate_answer(self, msg: str, user_id: int) -> Tuple[int, str]:
         """
         Generates the answer for user message.
+        :param user_id: id to identify a user
         :param msg: Last message from a user
         :return: Next state and an answer
         """
@@ -42,6 +43,6 @@ class IntroHandler(StateHandler):
         super().__init__(state_id)
         self.next_state_pos = next_state_id
 
-    def generate_answer(self, msg: str) -> Tuple[int, str]:
+    def generate_answer(self, msg: str, user_id: int) -> Tuple[int, str]:
         return self.next_state_pos, "Привет! Пока я ничего не знаю, но и Рим не за один день строился."
 
