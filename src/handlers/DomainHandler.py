@@ -4,7 +4,7 @@ from definitions import BOT_STATE
 
 
 class DomainHandler(StateHandler):
-    def __init__(self, handlers: Dict[int, StateHandler], state_id: int = BOT_STATE.DOMAIN_RECOGNITION):
+    def __init__(self, handlers: Dict[BOT_STATE, StateHandler], state_id: int = BOT_STATE.DOMAIN_RECOGNITION):
         super().__init__(state_id)
         self.handlers = handlers
         self.keywords = {
@@ -44,11 +44,11 @@ class DomainHandler(StateHandler):
         next_state = self.state_id
 
         if kirill:
-            next_state, ans = self.handlers[BOT_STATE.KIRILL_DOMAIN.value].generate_answer(msg)
+            next_state, ans = self.handlers[BOT_STATE.KIRILL_DOMAIN].generate_answer(msg)
         elif dasha:
-            next_state, ans = self.handlers[BOT_STATE.DASHA_DOMAIN.value].generate_answer(msg)
+            next_state, ans = self.handlers[BOT_STATE.DASHA_DOMAIN].generate_answer(msg)
         elif weather:
-            next_state, ans = self.handlers[BOT_STATE.WEATHER.value].generate_answer(msg)
+            next_state, ans = self.handlers[BOT_STATE.WEATHER].generate_answer(msg)
         elif goodbye:
             next_state, ans = BOT_STATE.INTRO, 'Пока!'
 
