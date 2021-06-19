@@ -34,9 +34,13 @@ def main():
 
     dispatcher.add_handler(conv_handler)
 
+    print("Bot's started!")
+
     updater.start_polling()
 
     updater.idle()
+
+    print("Quitting!")
 
 
 if __name__ == "__main__":
