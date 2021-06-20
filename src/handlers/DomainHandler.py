@@ -1,9 +1,7 @@
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
-from string import punctuation
 from typing import Tuple, Dict
 
 from src.handlers.handlers import StateHandler
+from util import lemmatize
 from definitions import BOT_STATE, KeyWords, BotVocabulary
 
 
@@ -19,13 +17,7 @@ class DomainHandler(StateHandler):
                          'goodbye': KeyWords.BYE.value}
 
     def generate_answer(self, msg: str, user_id: int) -> Tuple[int, str]:
-        msg = msg.lower()
-        tokens = word_tokenize(msg)
-        # words without punctuation
-        filtered_tokens = [w for w in tokens if not w.lower() in punctuation]
-        lemmatizer = WordNetLemmatizer()
-        # words in infinitive form
-        lemmas = [lemmatizer.lemmatize(w) for w in filtered_tokens]
+        lemmas = lemmatize(msg)
 
         weather, kirill, dasha, goodbye, hello, thanks = [False] * 6
         for word in lemmas:
@@ -39,11 +31,13 @@ class DomainHandler(StateHandler):
                 goodbye = True
             if word in self.keywords['thanks']:
                 thanks = True
-            # users can greet and request at the same time, answer on greeting only if request was not captured
-            elif word in self.keywords['hello']:
-                hello = True
-        if weather + kirill + dasha + goodbye + hello + thanks != 1:
-            return self.state_id, BotVocabulary.ASK.value
+        # users can greet and request at the same time, answer on greeting only if request was not captured
+        if weather + kirill + dasha + goodbye + thanks != 1:
+            for word in lemmas:
+                if word in self.keywords['hello']:
+                    hello = True
+                else:
+                    return self.state_id, BotVocabulary.ASK.value
 
         ans = "Whatever"
         next_state = self.state_id
@@ -51,7 +45,7 @@ class DomainHandler(StateHandler):
         if kirill:
             next_state, ans = self.handlers[BOT_STATE.KIRILL_DOMAIN].generate_answer(msg, user_id)
         elif dasha:
-            next_state, ans = self.handlers[BOT_STATE.DASHA_DOMAIN].generate_answer(msg, user_id)
+            next_state, ans = self.handlers[BOT_STATE.DASHA_DOMAIN].generate_answer(lemmas, user_id)
         elif weather:
             next_state, ans = self.handlers[BOT_STATE.WEATHER].generate_answer(msg, user_id)
         elif goodbye:
