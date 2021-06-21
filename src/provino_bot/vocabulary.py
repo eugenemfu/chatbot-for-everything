@@ -81,6 +81,15 @@ class AvailableOption(Enum):
 
 
 @unique
+class SweetnessDetector(Enum):
+    SWEET = ArgumentInfo(['сладко', 'сладкий', 'сладость'],
+                         ['sweet'])
+
+    DRY = ArgumentInfo(['сухой'],
+                       ['dry'])
+
+
+@unique
 class WineBotVocabulary(Enum):
     INTRO = f'Сейчас что-нибудь подберем, только задам пару вопросов. Какое вино предпочитаем: ' \
             f'{translate_list_to_str(AvailableOption.TYPES.value.user_name)}?'
