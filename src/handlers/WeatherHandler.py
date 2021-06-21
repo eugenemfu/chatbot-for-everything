@@ -2,6 +2,8 @@ from src.handlers.handlers import StateHandler
 from typing import Tuple
 from definitions import BOT_STATE
 import natasha
+from util import lemmatize
+import time
 
 
 class WeatherHandler(StateHandler):
@@ -19,6 +21,18 @@ class WeatherHandler(StateHandler):
         self.morph_tagger = natasha.NewsMorphTagger(self.emb)
         self.syntax_parser = natasha.NewsSyntaxParser(self.emb)
         self.ner_tagger = natasha.NewsNERTagger(self.emb)
+        self.day_keywords = [
+            "сегодня",
+            "завтра",
+            "послезавтра",
+            "понедельник",
+            "вторник",
+            "среда",
+            "четверг",
+            "пятница",
+            "суббота",
+            "воскресенье",
+        ]
 
     def find_city(self, msg):
         doc = natasha.Doc(msg.title())
@@ -35,12 +49,16 @@ class WeatherHandler(StateHandler):
 
     def find_date(self, msg):
         dates = list(self.dates_extractor(msg))
-        if len(dates) != 1:
+        daywords = [_ for _ in lemmatize(msg) if _ in self.day_keywords]
+        if len(dates) + len(daywords) != 1:
             return None
-        return msg[dates[0].start:dates[0].stop]
+        elif len(dates) == 1:
+            return msg[dates[0].start:dates[0].stop]
+        elif len(daywords) == 1:
+            return daywords[0]
 
     def get_forecast(self, city, date):
-        return 'Погода ' + city + ' ' + date
+        return 'Погода в ' + city + ' ' + date
 
     def generate_answer(self, msg, user_id) -> Tuple[int, str]:
         city = self.find_city(msg)
