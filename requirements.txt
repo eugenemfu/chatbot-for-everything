@@ -1,3 +1,7 @@
 python-telegram-bot>=13.5
 torch
 transformers==4.6.1
+pandas
+nltk
+requests
+pymystem3

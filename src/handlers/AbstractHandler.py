@@ -3,7 +3,7 @@ import abc
 from typing import Tuple, Iterable
 from telegram import Update
 from telegram.ext import CallbackContext
-from definitions import BOT_STATE
+from definitions import BOT_STATE, BotVocabulary
 
 
 class StateHandler(metaclass=abc.ABCMeta):
@@ -44,5 +44,5 @@ class IntroHandler(StateHandler):
         self.next_state_pos = next_state_id
 
     def generate_answer(self, msg: str, user_id: int) -> Tuple[int, str]:
-        return self.next_state_pos, "Привет! Пока я ничего не знаю, но и Рим не за один день строился."
+        return self.next_state_pos, BotVocabulary.INTRO.value
 
