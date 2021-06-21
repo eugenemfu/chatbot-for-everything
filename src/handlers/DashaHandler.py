@@ -63,7 +63,7 @@ class DashaHandler(StateHandler):
                       f'{self.df.rating.tolist()[self.attempts]} – это самое лучшее, что я смог найти в ' \
                       f'данной ценовой категории. Заказать за {self.df.price.tolist()[self.attempts]} рублей и ' \
                       f'подробнее ознакомиться с характеристиками можно ознакомиться здесь: ' \
-                      f'{self.df.url.tolist()[self.attempts]}. По этому запросу вина еще будем смотреть?'
+                      f'{self.df.url.tolist()[self.attempts]}.\nПо этому запросу вина еще будем смотреть?'
                 self.checkpoint += 1
         return ans
 
@@ -75,7 +75,7 @@ class DashaHandler(StateHandler):
             ans = f'{introduction} {self.df.name.tolist()[self.attempts]}. Рейтинг на Vivino: ' \
                   f'{self.df.rating.tolist()[self.attempts]}. Если заказать на ' \
                   f'{self.df.url.tolist()[self.attempts]}, будет стоить {self.df.price.tolist()[self.attempts]}. ' \
-                  f'{question}'
+                  f'\n{question}'
             state = BOT_STATE.DASHA_DOMAIN
 
         else:
@@ -153,6 +153,7 @@ class DashaHandler(StateHandler):
                 elif word in no_ans:
                     ans = self.generate_quote()
                     state = BOT_STATE.DOMAIN_RECOGNITION
+                    self.checkpoint = 0
                     break
 
                 else:

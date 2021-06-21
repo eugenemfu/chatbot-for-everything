@@ -5,3 +5,5 @@ pandas
 nltk
 requests
 pymystem3
+natasha
+geopy

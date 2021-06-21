@@ -51,17 +51,17 @@ class WineBotInterpreter(object):
 
         elif word in WineCountry.GEORGIA.value.user_name:
             if not full_name:
-                return WineCountry.GEORGIA.value.short_code
+                return WineCountry.GEORGIA.value.api_short_code
             return WineCountry.GEORGIA.value.api_long_name
 
         elif word in WineCountry.CANADA.value.user_name:
             if not full_name:
-                return WineCountry.CANADA.value.short_code
+                return WineCountry.CANADA.value.api_short_code
             return WineCountry.CANADA.value.api_long_name
 
         elif word in WineCountry.MEXICO.value.user_name:
             if not full_name:
-                return WineCountry.MEXICO.value.short_code
+                return WineCountry.MEXICO.value.api_short_code
             return WineType.MEXICO.value.api_long_name
 
         elif word in WineCountry.NEW_ZEALAND.value.user_name:
@@ -81,7 +81,7 @@ class WineBotInterpreter(object):
 
         elif word in WineCountry.RUSSIA.value.user_name:
             if not full_name:
-                return WineCountry.RUSSIA.value.short_code
+                return WineCountry.RUSSIA.value.api_short_code
             return WineCountry.RUSSIA.value.api_long_name
 
         elif word in WineCountry.UKRAINE.value.user_name:
@@ -96,5 +96,5 @@ class WineBotInterpreter(object):
 
         elif word in WineCountry.SPAIN.value.user_name:
             if not full_name:
-                return WineCountry.SPAIN.value.short_code
+                return WineCountry.SPAIN.value.api_short_code
             return WineCountry.SPAIN.value.long_name
