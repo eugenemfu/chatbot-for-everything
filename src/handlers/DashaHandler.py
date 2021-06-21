@@ -2,14 +2,15 @@ import requests
 import pandas as pd
 import random
 
-from src.handlers.handlers import StateHandler
-from typing import Tuple
+from typing import Tuple, List, Union
 from pathlib import Path
-from util import lemmatize, lemmatize_list
-from definitions import BOT_STATE, WineCountry, WineType, WineBotVocabulary, ApiArgument, AvailableOption, \
-    parameter_dict, ROOT_DIR
 
-from typing import List, Union
+from definitions import BOT_STATE, ROOT_DIR, BotVocabulary
+from src.provino_bot.vocabulary import WineBotVocabulary, ApiArgument, AvailableOption, parameter_dict
+from src.provino_bot.msg_interpreter import WineBotInterpreter
+from src.handlers.handlers import StateHandler
+from util import translate_list_to_str
+from util import lemmatize, lemmatize_list
 
 
 class DashaHandler(StateHandler):
@@ -18,64 +19,18 @@ class DashaHandler(StateHandler):
         self.wine_type = None
         self.wine_country = None
         self.upper_price_bound = None
+        self.country_code = None
         self.checkpoint = 0
-        self.attempts = 1
+        self.attempts = 0
+        self.df = None
         self.quotes = list(pd.read_csv(Path(ROOT_DIR) / 'data/wine_quotes.csv')['quote'])
-
-    @staticmethod
-    def __define_wine_type(msg):
-        if msg in WineType.WHITE.value.user_name:
-            return WineType.WHITE.value.api_code
-        elif msg in WineType.SPARKLING.value.user_name:
-            return WineType.SPARKLING.value.api_code
-        elif msg in WineType.ROSE.value.user_name:
-            return WineType.ROSE.value.api_code
-        elif msg in WineType.DESERT.value.user_name:
-            return WineType.DESERT.value.api_code
-        elif msg in WineType.FORTIFIED.value.user_name:
-            return WineType.FORTIFIED.value.api_code
-        else:
-            return WineType.RED.value.api_code
-
-    @staticmethod
-    def __define_wine_country(word):
-        if word in WineCountry.ARGENTINE.value.user_name:
-            return WineCountry.ARGENTINE.value.api_code
-        elif word in WineCountry.AUSTRALIA.value.user_name:
-            return WineCountry.AUSTRALIA.value.api_code
-        elif word in WineCountry.CANADA.value.user_name:
-            return WineCountry.CANADA.value.api_code
-        elif word in WineCountry.CHILE.value.user_name:
-            return WineCountry.CHILE.value.api_code
-        elif word in WineCountry.FRANCE.value.user_name:
-            return WineCountry.FRANCE.value.api_code
-        elif word in WineCountry.ITALY.value.user_name:
-            return WineCountry.ITALY.value.api_code
-        elif word in WineCountry.GEORGIA.value.user_name:
-            return WineCountry.GEORGIA.value.api_code
-        elif word in WineCountry.CANADA.value.user_name:
-            return WineCountry.CANADA.value.api_code
-        elif word in WineCountry.MEXICO.value.user_name:
-            return WineType.MEXICO.value.api_code
-        elif word in WineCountry.NEW_ZEALAND.value.user_name:
-            return WineCountry.NEW_ZEALAND.value.api_code
-        elif word in WineCountry.POLAND.value.user_name:
-            return WineCountry.POLAND.value.api_code
-        elif word in WineCountry.PORTUGAL.value.user_name:
-            return WineCountry.PORTUGAL.value.api_code
-        elif word in WineCountry.RUSSIA.value.user_name:
-            return WineCountry.RUSSIA.value.api_code
-        elif word in WineCountry.UKRAINE.value.user_name:
-            return WineCountry.UKRAINE.value.api_code
-        elif word in WineCountry.USA.value.user_name:
-            return WineCountry.USA.value.api_code
-        elif word in WineCountry.SPAIN.value.user_name:
-            return WineCountry.SPAIN.value.api_code
 
     def __make_get_request(self) -> dict:
         parameter_dict["price_range_max"] = self.upper_price_bound
         parameter_dict["wine_type_ids[]"] = self.wine_type
         parameter_dict["page"] = self.attempts
+        parameter_dict["country_codes[]"] = self.country_code
+
         r = requests.get(ApiArgument.API_ADDRESS.value,
                          params=parameter_dict,
                          headers={ApiArgument.HEADER_USER.value: ApiArgument.HEADER_ADDRESS.value})
@@ -89,29 +44,49 @@ class DashaHandler(StateHandler):
                          t["vintage"]["wine"]["region"]["country"]["name"],
                          t['price']['amount'],
                          t["price"]["url"]) for t in r["explore_vintage"]["matches"]]
+
         dataframe = pd.DataFrame(result_table, columns=['name', 'seo', "rating", "country", "price", "url"])
         return dataframe
 
     def __generate_answer(self, df: pd.DataFrame):
-        df = df[df["country"] == self.wine_country]
-        try:
-            quote = random.choice(self.quotes)
-            ans = f'Предлагаю попробовать {df.name.tolist()[0]}. Рейтинг на Vivno ' \
-                  f'{df.rating.tolist()[0]}, в принципе неплохо для {df.price.tolist()[0]} рублей. Заказать' \
-                  f' и подробнее ознакомиться с характеристиками можно ознакомиться здесь: {df.url.tolist()[0]}.' \
-                  f' Надеюсь, тебе понравится. Твоя цитата дня: {quote}'
+        self.df = df[df["country"] == self.wine_country]
+        self.df = df.sort_values(by='rating', ascending=False)
+        self.df = df.drop_duplicates(subset='name', keep="first")
 
-        except Exception:
+        if len(self.df) == 0:
+            ans = WineBotVocabulary.FAIL.value
+            self.checkpoint = 0
+
+        else:
+            if self.attempts < len(df):
+                ans = f'Предлагаю попробовать {self.df.name.tolist()[self.attempts]}. На Vivino у него рейтинг ' \
+                      f'{self.df.rating.tolist()[self.attempts]} – это самое лучшее, что я смог найти в ' \
+                      f'данной ценовой категории. Заказать за {self.df.price.tolist()[self.attempts]} рублей и ' \
+                      f'подробнее ознакомиться с характеристиками можно ознакомиться здесь: ' \
+                      f'{self.df.url.tolist()[self.attempts]}. По этому запросу вина еще будем смотреть?'
+                self.checkpoint += 1
+        return ans
+
+    def generate_one_more_answer(self):
+        if self.attempts < len(self.df):
             self.attempts += 1
+            question = random.choice(AvailableOption.GENERAL.value.api_short_code)
+            introduction = random.choice(AvailableOption.GENERAL.value.user_name)
+            ans = f'{introduction} {self.df.name.tolist()[self.attempts]}. Рейтинг на Vivino: ' \
+                  f'{self.df.rating.tolist()[self.attempts]}. Если заказать на ' \
+                  f'{self.df.url.tolist()[self.attempts]}, будет стоить {self.df.price.tolist()[self.attempts]}. ' \
+                  f'{question}'
+            state = BOT_STATE.DASHA_DOMAIN
 
-            if self.attempts < 500:
-                r = self.__make_get_request()
-                df = self.__filter_json_results(r)
-                return self.__generate_answer(df)
+        else:
+            quote = random.choice(self.quotes)
+            ans = f'{AvailableOption.GENERAL.value.api_long_name} {quote} Надеюсь, был полезен!'
+            state = BOT_STATE.DOMAIN_RECOGNITION
+        return ans, state
 
-            else:
-                ans = f"Сложный получился запрос. Я, к сожалению, не смог ничего найти. Попробуешь сначала?"
-                self.checkpoint = 0
+    def generate_quote(self):
+        quote = random.choice(self.quotes)
+        ans = f'Отлично, надеюсь, был полезен! И, напоследок, твоя цитата дня: {quote}'
         return ans
 
     def get_result(self):
@@ -129,14 +104,14 @@ class DashaHandler(StateHandler):
             msg = lemmatize(msg)
             for word in msg:
                 if word in types:
-                    self.wine_type = self.__define_wine_type(msg)
+                    self.wine_type = WineBotInterpreter.define_wine_type(msg)
                     self.checkpoint += 1
                     ans = WineBotVocabulary.QUESTION.value
                     break
                 else:
                     ans = f'{WineBotVocabulary.ASK.value}' \
-                          f'{", ".join(str(x) for x in AvailableOption.TYPES.value.user_name[:-1])} ' \
-                          f'или {AvailableOption.TYPES.value.user_name[-1]}'
+                          f'{translate_list_to_str(AvailableOption.TYPES.value.user_name)} '
+
             return BOT_STATE.DASHA_DOMAIN, ans
 
         elif self.checkpoint == 2:
@@ -144,14 +119,14 @@ class DashaHandler(StateHandler):
             msg = lemmatize(msg)
             for word in msg:
                 if word in countries:
-                    self.wine_country = self.__define_wine_country(word)
+                    self.wine_country = WineBotInterpreter.define_wine_country(word)
+                    self.country_code = WineBotInterpreter.define_wine_country(word, full_name=False)
                     self.checkpoint += 1
                     ans = WineBotVocabulary.PRICE.value
                     break
                 else:
                     ans = f'{WineBotVocabulary.ASK.value}' \
-                          f'{", ".join(str(x) for x in AvailableOption.COUNTRIES.value.user_name[:-1])} ' \
-                          f'или {AvailableOption.COUNTRIES.value.user_name[-1]}'
+                          f'{translate_list_to_str(AvailableOption.COUNTRIES.value.api_code)}'
             return BOT_STATE.DASHA_DOMAIN, ans
 
         elif self.checkpoint == 3:
@@ -159,11 +134,29 @@ class DashaHandler(StateHandler):
                 msg = int(msg)
                 if msg > 0:
                     self.upper_price_bound = msg
-                    self.checkpoint = 0
                     ans = self.get_result()
                 else:
                     ans = WineBotVocabulary.POSITIVE.value
             except ValueError:
                 ans = WineBotVocabulary.NUMBER.value
+            return BOT_STATE.DASHA_DOMAIN, ans
 
-        return BOT_STATE.DOMAIN_RECOGNITION, ans
+        elif self.checkpoint == 4:
+            msg = lemmatize(msg)
+            yes_ans = lemmatize_list(AvailableOption.AGREEMENT.value.user_name)
+            no_ans = lemmatize_list(AvailableOption.AGREEMENT.value.api_code)
+            for word in msg:
+                if word in yes_ans:
+                    ans, state = self.generate_one_more_answer()
+                    break
+
+                elif word in no_ans:
+                    ans = self.generate_quote()
+                    state = BOT_STATE.DOMAIN_RECOGNITION
+                    break
+
+                else:
+                    ans = BotVocabulary.ASK.value
+                    state = BOT_STATE.DASHA_DOMAIN
+
+            return state, ans

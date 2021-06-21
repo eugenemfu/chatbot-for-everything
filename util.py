@@ -22,5 +22,5 @@ def lemmatize_list(words: List) -> List:
 
 
 def translate_list_to_str(list_msg: List) -> str:
-    str_msg = ", ".join(str(x) for x in list_msg[:-1])
+    str_msg = f'{", ".join(str(x) for x in list_msg[:-1])} или {list_msg[-1]}'
     return str_msg

@@ -4,3 +4,4 @@ transformers==4.6.1
 pandas
 nltk
 requests
+pymystem3
