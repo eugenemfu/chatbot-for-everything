@@ -11,13 +11,12 @@ class DomainHandler(StateHandler):
         self.handlers = handlers
         self.keywords = {'weather': KeyWords.WEATHER.value,
                          'kirill': KeyWords.KIRILL.value,
-                         'dasha': KeyWords.DASHA.value,
-                         'thanks': KeyWords.THANKS.value}
+                         'dasha': KeyWords.DASHA.value}
 
     def generate_answer(self, msg: str, user_id: int) -> Union[int, str]:
         lemmas = lemmatize(msg)
 
-        weather, kirill, dasha, goodbye, hello, thanks = [False] * 6
+        weather, kirill, dasha = [False] * 3
         for word in lemmas:
             if word in self.keywords['weather']:
                 weather = True
@@ -25,14 +24,11 @@ class DomainHandler(StateHandler):
                 kirill = True
             if word in self.keywords['dasha']:
                 dasha = True
-            if word in self.keywords['thanks']:
-                thanks = True
+        if weather + kirill + dasha > 1:
+            return self.state_id, 'Переформулируй, пожалуйста, я не понял'
+        if weather + kirill + dasha == 0:
+            return self.state_id, 'Чем я могу помочь?'
 
-        # users can greet and request at the same time, answer on greeting only if request was not captured
-        if weather + kirill + dasha + goodbye + thanks != 1:
-            return self.state_id, BotVocabulary.ASK.value
-
-        next_state = self.state_id
 
         if kirill:
             next_state, ans = self.handlers[BOT_STATE.KIRILL_DOMAIN].generate_answer(msg, user_id)
@@ -40,7 +36,5 @@ class DomainHandler(StateHandler):
             next_state, ans = self.handlers[BOT_STATE.DASHA_DOMAIN].generate_answer(lemmas, user_id)
         elif weather:
             next_state, ans = self.handlers[BOT_STATE.WEATHER].generate_answer(msg, user_id)
-        elif thanks:
-            ans = BotVocabulary.PLEASE.value
 
         return next_state, ans
