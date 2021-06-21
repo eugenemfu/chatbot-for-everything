@@ -43,7 +43,6 @@ class WeatherHandler(StateHandler):
         return 'Погода ' + city + ' ' + date
 
     def generate_answer(self, msg, user_id) -> Tuple[int, str]:
-        print(msg)
         city = self.find_city(msg)
         date = self.find_date(msg)
 

@@ -37,11 +37,11 @@ class DomainHandler(StateHandler):
                 dasha = True
             if word in self.keywords['goodbye']:
                 goodbye = True
-        if weather + kirill + dasha + goodbye != 1:
+        if weather + kirill + dasha + goodbye > 1:
             return self.state_id, 'Переформулируй, пожалуйста, я не понял'
+        if weather + kirill + dasha + goodbye == 0:
+            return self.state_id, 'Чем я могу помочь?'
 
-        ans = "Whatever"
-        next_state = self.state_id
 
         if kirill:
             next_state, ans = self.handlers[BOT_STATE.KIRILL_DOMAIN].generate_answer(msg, user_id)
