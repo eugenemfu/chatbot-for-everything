@@ -12,7 +12,7 @@ def main():
     handlers = {
         BOT_STATE.INTRO: IntroHandler(),
         BOT_STATE.WEATHER: WeatherHandler(),
-        BOT_STATE.KIRILL_DOMAIN: KirillHandler(),
+        BOT_STATE.KIRILL_DOMAIN: None, #KirillHandler(),
         BOT_STATE.DASHA_DOMAIN: DashaHandler(),
     }
     domain_handler = DomainHandler(handlers)
