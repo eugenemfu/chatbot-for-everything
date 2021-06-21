@@ -1,10 +1,11 @@
+import os
 import torch
 
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 from typing import Tuple
 
 from src.handlers.handlers import StateHandler
-from definitions import BOT_STATE, SpecialTokens, TOKENIZER_PATH, CHGK_MODEL_PATH
+from definitions import BOT_STATE, SpecialTokens, TOKENIZER_PATH, CHGK_MODEL_PATH, ROOT_DIR
 
 
 class GPT2SberSmall(torch.nn.Module):
@@ -60,7 +61,7 @@ class KirillHandler(StateHandler):
         super().__init__(state_id)
         self.asked_for_context = False
 
-        self.model = GPT2SberSmall(CHGK_MODEL_PATH, TOKENIZER_PATH, torch.device("cpu"))
+        self.model = GPT2SberSmall(os.path.join(ROOT_DIR, CHGK_MODEL_PATH), TOKENIZER_PATH, torch.device("cpu"))
         self.model.eval()
 
         self.generation_params = {
