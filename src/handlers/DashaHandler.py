@@ -6,8 +6,8 @@ from typing import Tuple, List, Union
 from pathlib import Path
 
 from definitions import BOT_STATE, ROOT_DIR, BotVocabulary
-from src.provino_bot.vocabulary import WineBotVocabulary, ApiArgument, AvailableOption, parameter_dict
-from src.provino_bot.msg_interpreter import WineBotInterpreter
+from src.common.vocabulary import WineBotVocabulary, ApiArgument, AvailableOption, parameter_dict
+from src.common.msg_interpreter import WineBotInterpreter
 from src.handlers.handlers import StateHandler
 from util import translate_list_to_str
 from util import lemmatize, lemmatize_list
@@ -94,7 +94,7 @@ class DashaHandler(StateHandler):
         df = self.__filter_json_results(r)
         return self.__generate_answer(df)
 
-    def generate_answer(self, msg: Union[List, str], user_id) -> Tuple[int, str]:
+    def generate_answer(self, msg: Union[List, str], user_id) -> Tuple[BOT_STATE, str]:
         if self.checkpoint == 0:
             self.checkpoint += 1
             return BOT_STATE.DASHA_DOMAIN, WineBotVocabulary.INTRO.value
@@ -106,13 +106,13 @@ class DashaHandler(StateHandler):
                 if word in types:
                     self.wine_type = WineBotInterpreter.define_wine_type(msg)
                     self.checkpoint += 1
-                    ans = WineBotVocabulary.QUESTION.value
+                    answer = WineBotVocabulary.QUESTION.value
                     break
                 else:
-                    ans = f'{WineBotVocabulary.ASK.value}' \
+                    answer = f'{WineBotVocabulary.ASK.value}' \
                           f'{translate_list_to_str(AvailableOption.TYPES.value.user_name)} '
 
-            return BOT_STATE.DASHA_DOMAIN, ans
+            return BOT_STATE.DASHA_DOMAIN, answer
 
         elif self.checkpoint == 2:
             countries = lemmatize_list(AvailableOption.COUNTRIES.value.user_name)
@@ -122,24 +122,24 @@ class DashaHandler(StateHandler):
                     self.wine_country = WineBotInterpreter.define_wine_country(word)
                     self.country_code = WineBotInterpreter.define_wine_country(word, full_name=False)
                     self.checkpoint += 1
-                    ans = WineBotVocabulary.PRICE.value
+                    answer = WineBotVocabulary.PRICE.value
                     break
                 else:
-                    ans = f'{WineBotVocabulary.ASK.value}' \
+                    answer = f'{WineBotVocabulary.ASK.value}' \
                           f'{translate_list_to_str(AvailableOption.COUNTRIES.value.api_code)}'
-            return BOT_STATE.DASHA_DOMAIN, ans
+            return BOT_STATE.DASHA_DOMAIN, answer
 
         elif self.checkpoint == 3:
             try:
                 msg = int(msg)
                 if msg > 0:
                     self.upper_price_bound = msg
-                    ans = self.get_result()
+                    answer = self.get_result()
                 else:
-                    ans = WineBotVocabulary.POSITIVE.value
+                    answer = WineBotVocabulary.POSITIVE.value
             except ValueError:
-                ans = WineBotVocabulary.NUMBER.value
-            return BOT_STATE.DASHA_DOMAIN, ans
+                answer = WineBotVocabulary.NUMBER.value
+            return BOT_STATE.DASHA_DOMAIN, answer
 
         elif self.checkpoint == 4:
             msg = lemmatize(msg)
@@ -147,17 +147,17 @@ class DashaHandler(StateHandler):
             no_ans = lemmatize_list(AvailableOption.AGREEMENT.value.api_code)
             for word in msg:
                 if word in yes_ans:
-                    ans, state = self.generate_one_more_answer()
+                    answer, state = self.generate_one_more_answer()
                     break
 
                 elif word in no_ans:
-                    ans = self.generate_quote()
+                    answer = self.generate_quote()
                     state = BOT_STATE.DOMAIN_RECOGNITION
                     self.checkpoint = 0
                     break
 
                 else:
-                    ans = BotVocabulary.ASK.value
+                    answer = BotVocabulary.ASK.value
                     state = BOT_STATE.DASHA_DOMAIN
 
-            return state, ans
+            return state, answer

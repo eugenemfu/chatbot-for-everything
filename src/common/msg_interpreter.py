@@ -1,4 +1,4 @@
-from src.provino_bot.vocabulary import WineType, WineCountry
+from src.common.vocabulary import WineType, WineCountry
 
 
 class WineBotInterpreter(object):
