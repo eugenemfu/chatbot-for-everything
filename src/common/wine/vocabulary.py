@@ -154,9 +154,11 @@ class AvailableOption(Enum):
 
 @unique
 class SweetnessDetector(Enum):
-    SWEET = ArgumentInfo(["сладко", "сладкий", "сладость"], ["sweet"])
-
-    DRY = ArgumentInfo(["сухой"], ["dry"])
+    SWEET = ArgumentInfo(["сладко", "сладкий", "сладость"], ["sweet", "sweetened"])
+    SEMI_SWEET = ArgumentInfo(["полу-сладкий", "полусладкий"], ["semi-sweet", "half-sweet"])
+    SEMI_DRY = ArgumentInfo(["полу-сухой", "полусухой"], ["semi-dry", "half-dry", "semidry", "mediumdry", "semi-arid"])
+    DRY = ArgumentInfo(["сухой"], ["dry", "dried"])
+    GENERAL = ["сладко", "сладкий", "сладость", "полу-сладкий", "полусладкий", "полу-сухой", "полусухой", "сухой"]
 
 
 @unique

@@ -1,4 +1,4 @@
-from src.common.wine.vocabulary import WineType, WineCountry
+from src.common.wine.vocabulary import WineType, WineCountry, SweetnessDetector
 
 
 class WineBotInterpreter(object):
@@ -6,16 +6,34 @@ class WineBotInterpreter(object):
     def define_wine_type(msg):
         if msg in WineType.WHITE.value.user_name:
             return WineType.WHITE.value.api_code
+
         elif msg in WineType.SPARKLING.value.user_name:
             return WineType.SPARKLING.value.api_code
+
         elif msg in WineType.ROSE.value.user_name:
             return WineType.ROSE.value.api_code
+
         elif msg in WineType.DESERT.value.user_name:
             return WineType.DESERT.value.api_code
+
         elif msg in WineType.FORTIFIED.value.user_name:
             return WineType.FORTIFIED.value.api_code
         else:
             return WineType.RED.value.api_code
+
+    @staticmethod
+    def define_wine_sweetness(msg):
+        if msg in SweetnessDetector.SWEET.value.user_name:
+            return SweetnessDetector.SWEET.value.api_code
+
+        elif msg in SweetnessDetector.SEMI_SWEET.value.user_name:
+            return SweetnessDetector.SEMI_SWEET.value.api_code
+
+        elif msg in SweetnessDetector.SEMI_DRY.value.user_name:
+            return SweetnessDetector.SEMI_DRY.value.api_code
+
+        elif msg in SweetnessDetector.DRY.value.user_name:
+            return SweetnessDetector.DRY.value.api_code
 
     @staticmethod
     def define_wine_country(word, full_name=True):
