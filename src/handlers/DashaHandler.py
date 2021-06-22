@@ -6,8 +6,8 @@ from typing import Tuple, List, Union
 from pathlib import Path
 
 from definitions import BOT_STATE, ROOT_DIR, BotVocabulary
-from src.common.vocabulary import WineBotVocabulary, ApiArgument, AvailableOption, parameter_dict
-from src.common.msg_interpreter import WineBotInterpreter
+from src.common.wine.vocabulary import WineBotVocabulary, ApiArgument, AvailableOption, parameter_dict
+from src.common.wine.msg_interpreter import WineBotInterpreter
 from src.handlers.handlers import StateHandler
 from util import translate_list_to_str
 from util import lemmatize, lemmatize_list

@@ -1,4 +1,4 @@
-from src.common.vocabulary import WineType, WineCountry
+from src.common.wine.vocabulary import WineType, WineCountry
 
 
 class WineBotInterpreter(object):
