@@ -1,8 +1,8 @@
 .PHONY: extract download
 
-MODEL_ZIP_NAME=new_data.tar.gz
+MODEL_ZIP_NAME=blitz_model.tar.gz
 MODEL_URL=https://hse-dl-models.s3.eu-central-1.amazonaws.com/$(MODEL_ZIP_NAME)
-MODEL_DIR=data/models/new_data
+MODEL_DIR=data/models/blitz
 
 
 download: $(MODEL_ZIP_NAME)

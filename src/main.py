@@ -12,7 +12,7 @@ def main():
     handlers = {
         BOT_STATE.INTRO: IntroHandler(),
         BOT_STATE.WEATHER: WeatherHandler(),
-        # BOT_STATE.KIRILL_DOMAIN: KirillHandler(),
+        BOT_STATE.KIRILL_DOMAIN: KirillHandler(),
         BOT_STATE.DASHA_DOMAIN: DashaHandler(),
         BOT_STATE.HELP: HelpHandler(),
     }
@@ -24,7 +24,7 @@ def main():
         BOT_STATE.DOMAIN_RECOGNITION: [CommandHandler("help", handlers[BOT_STATE.HELP]),
                                        MessageHandler(Filters.text, handlers[BOT_STATE.DOMAIN_RECOGNITION]),],
         BOT_STATE.WEATHER: [MessageHandler(Filters.text, handlers[BOT_STATE.WEATHER])],
-        # BOT_STATE.KIRILL_DOMAIN: [MessageHandler(Filters.text, handlers[BOT_STATE.KIRILL_DOMAIN])],
+        BOT_STATE.KIRILL_DOMAIN: [MessageHandler(Filters.text, handlers[BOT_STATE.KIRILL_DOMAIN])],
         BOT_STATE.DASHA_DOMAIN: [MessageHandler(Filters.text, handlers[BOT_STATE.DASHA_DOMAIN])],
     }
 
