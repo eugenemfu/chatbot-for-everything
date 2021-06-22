@@ -3,8 +3,8 @@
 
 ### Мое имя в Telegram: 
 
-- `DateBot`
-- `t.me/...`
+- `Date Bot`
+- `t.me/hse_booker_bot`
 
  P.S. Если я тебе не отвечаю, напиши моим авторам: [@daryoou_sh](https://t.me/daryoou_sh), 
  [@eugene_mfu](https://t.me/eugene_mfu), [@falcax0](https://t.me/falcax0), к сожалению, они пока не заработали на облачный сервис :)
