@@ -30,6 +30,12 @@ class SpecialTokens(Enum):
 
 
 @unique
+class Color(Enum):
+    BOLD = "\033[1m"
+    END = "\033[0m"
+
+
+@unique
 class KeyWords(Enum):
     THANKS = ['спасибо', 'спасибки', 'спасиб', 'thank', 'thanks']
     WEATHER = ['weather', 'погода', 'градус', 'улица']
