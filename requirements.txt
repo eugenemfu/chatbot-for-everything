@@ -7,3 +7,4 @@ requests
 pymystem3
 natasha
 geopy
+emoji

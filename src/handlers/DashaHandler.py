@@ -1,8 +1,8 @@
 import requests
 import pandas as pd
 import random
-
-from typing import Tuple, List, Union, Optional
+import emoji
+from typing import Tuple, List, Union
 from pathlib import Path
 
 from definitions import BOT_STATE, ROOT_DIR, BotVocabulary
@@ -86,7 +86,8 @@ class DashaHandler(StateHandler):
 
     def generate_quote(self):
         quote = random.choice(self.quotes)
-        ans = f'Отлично, надеюсь, был полезен! И, напоследок, твоя цитата дня: {quote}'
+        ans = emoji.emojize(f'Отлично, надеюсь, был полезен! И, напоследок, твоя цитата дня: {quote} :red_heart:',
+                            variant="emoji_type")
         return ans
 
     def get_result(self):
