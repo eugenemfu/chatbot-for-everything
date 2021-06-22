@@ -62,8 +62,8 @@ class DashaHandler(StateHandler):
                 ans = f'Предлагаю попробовать {self.df.name.tolist()[self.attempts]}. На Vivino у него рейтинг ' \
                       f'{self.df.rating.tolist()[self.attempts]} – это самое лучшее, что я смог найти в ' \
                       f'данной ценовой категории. Заказать за {self.df.price.tolist()[self.attempts]} рублей и ' \
-                      f'подробнее ознакомиться с характеристиками можно ознакомиться здесь: ' \
-                      f'{self.df.url.tolist()[self.attempts]}.\nПо этому запросу вина еще будем смотреть?'
+                      f'подробнее ознакомиться с характеристиками можно здесь: ' \
+                      f'{self.df.url.tolist()[self.attempts]}.\n\nПо этому запросу вина еще будем смотреть?'
                 self.checkpoint += 1
         return ans
 
@@ -75,7 +75,7 @@ class DashaHandler(StateHandler):
             ans = f'{introduction} {self.df.name.tolist()[self.attempts]}. Рейтинг на Vivino: ' \
                   f'{self.df.rating.tolist()[self.attempts]}. Если заказать на ' \
                   f'{self.df.url.tolist()[self.attempts]}, будет стоить {self.df.price.tolist()[self.attempts]}. ' \
-                  f'\n{question}'
+                  f'\n\n{question}'
             state = BOT_STATE.DASHA_DOMAIN
 
         else:
@@ -95,14 +95,15 @@ class DashaHandler(StateHandler):
         return self.__generate_answer(df)
 
     def generate_answer(self, msg: Union[List, str], user_id) -> Tuple[BOT_STATE, str]:
+        if isinstance(msg, str):
+            msg = lemmatize(msg)
+
         if self.checkpoint == 0:
             self.checkpoint += 1
             return BOT_STATE.DASHA_DOMAIN, WineBotVocabulary.INTRO.value
 
         elif self.checkpoint == 1:
             types = lemmatize_list(AvailableOption.TYPES.value.user_name)
-            if isinstance(msg, str):
-                msg = lemmatize(msg)
             for word in msg:
                 if word in types:
                     self.wine_type = WineBotInterpreter.define_wine_type(msg)
@@ -117,8 +118,6 @@ class DashaHandler(StateHandler):
 
         elif self.checkpoint == 2:
             countries = lemmatize_list(AvailableOption.COUNTRIES.value.user_name)
-            if isinstance(msg, str):
-                msg = lemmatize(msg)
             for word in msg:
                 if word in countries:
                     self.wine_country = WineBotInterpreter.define_wine_country(word)
@@ -146,7 +145,6 @@ class DashaHandler(StateHandler):
             return BOT_STATE.DASHA_DOMAIN, answer
 
         elif self.checkpoint == 4:
-            msg = lemmatize(msg)
             yes_ans = lemmatize_list(AvailableOption.AGREEMENT.value.user_name)
             no_ans = lemmatize_list(AvailableOption.AGREEMENT.value.api_code)
             for word in msg:
