@@ -38,26 +38,38 @@ class WeatherHandler(StateHandler):
             "завтра",
             "послезавтра",
         ]
+        self.moscow = [
+            'мск',
+            "моск",
+            "мосвка",
+        ]
+        self.spb = [
+            'спб',
+            "питер",
+            "санкт",
+            "нева",
+            "акадос",
+        ]
         self.translate = {
-            'clear': 'ясно',
-            'partly-cloudy': 'малооблачно',
-            'cloudy': 'облачно с прояснениями',
-            'overcast': 'пасмурно',
-            'drizzle': 'морось',
-            'light-rain': 'небольшой дождь',
-            'rain': 'дождь',
-            'moderate-rain': 'умеренно сильный дождь',
-            'heavy-rain': 'сильный дождь',
-            'continuous-heavy-rain': 'длительный сильный дождь',
-            'showers': 'ливень',
-            'wet-snow': 'дождь со снегом',
-            'light-snow': 'небольшой снег',
-            'snow': 'снег',
-            'snow-showers': 'снегопад',
-            'hail': 'град',
-            'thunderstorm': 'гроза',
-            'thunderstorm-with-rain': 'дождь с грозой',
-            'thunderstorm-with-hail': 'гроза с градом',
+            'clear': 'Ясно',
+            'partly-cloudy': 'Малооблачно',
+            'cloudy': 'Облачно с прояснениями',
+            'overcast': 'Пасмурно',
+            'drizzle': 'Морось',
+            'light-rain': 'Небольшой дождь',
+            'rain': 'Дождь',
+            'moderate-rain': 'Умеренно сильный дождь',
+            'heavy-rain': 'Сильный дождь',
+            'continuous-heavy-rain': 'Длительный сильный дождь',
+            'showers': 'Ливень',
+            'wet-snow': 'Дождь со снегом',
+            'light-snow': 'Небольшой снег',
+            'snow': 'Снег',
+            'snow-showers': 'Снегопад',
+            'hail': 'Град',
+            'thunderstorm': 'Гроза',
+            'thunderstorm-with-rain': 'Дождь с грозой',
+            'thunderstorm-with-hail': 'Гроза с градом',
         }
 
     def find_city(self, msg):
@@ -69,17 +81,20 @@ class WeatherHandler(StateHandler):
         if doc.spans is None:
             return None
         locations = [_.text for _ in doc.spans if _.type == natasha.LOC]
-        if len(locations) != 1:
-            return None
-        return ' '.join(lemmatize(locations[0]))
+        spb = [_ for _ in lemmatize(msg) if _ in self.spb]
+        moscow = [_ for _ in lemmatize(msg) if _ in self.moscow]
+        if len(locations) == 1 and len(spb) == 0 and len(moscow) == 0:
+            return ' '.join(lemmatize(locations[0]))
+        elif len(locations) == 0 and len(spb) > 0 and len(moscow) == 0:
+            return "Санкт-Петербург"
+        elif len(locations) == 0 and len(spb) == 0 and len(moscow) > 0:
+            return "Москва"
+        return None
 
     def find_date(self, msg):
-        #dates = list(self.dates_extractor(msg))
         daywords = [_ for _ in lemmatize(msg) if _ in self.day_keywords]
-        if len(daywords) != 1: # len(dates) + len(daywords) != 1:
+        if len(daywords) != 1:
             return None
-        #elif len(dates) == 1:
-        #    return msg[dates[0].start:dates[0].stop]
         elif len(daywords) == 1:
             return self.day_keywords.index(daywords[0])
 
@@ -124,8 +139,9 @@ class WeatherHandler(StateHandler):
                 continue
             temp = str(fc['parts']['day_short']['temp'])
             condition = self.translate[fc['parts']['day_short']['condition']]
+            break
 
-        return condition.title() + ', ' + temp + ' C'
+        return condition + ', ' + temp + '°C'
 
     def generate_answer(self, msg, user_id) -> Tuple[int, str]:
         city = self.find_city(msg)

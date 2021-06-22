@@ -13,7 +13,7 @@ class DomainHandler(StateHandler):
                          'kirill': KeyWords.KIRILL.value,
                          'dasha': KeyWords.DASHA.value}
 
-    def generate_answer(self, msg: str, user_id: int) -> Union[int, str]:
+    def generate_answer(self, msg: str, user_id: int) -> tuple[int, str]:
         lemmas = lemmatize(msg)
 
         weather, kirill, dasha = [False] * 3
@@ -27,8 +27,7 @@ class DomainHandler(StateHandler):
         if weather + kirill + dasha > 1:
             return self.state_id, 'Переформулируй, пожалуйста, я не понял'
         if weather + kirill + dasha == 0:
-            return self.state_id, 'Чем я могу помочь?'
-
+            return self.state_id, 'Чем я могу помочь? Если хочешь узнать, что я умею, нажми /help.'
 
         if kirill:
             next_state, ans = self.handlers[BOT_STATE.KIRILL_DOMAIN].generate_answer(msg, user_id)
