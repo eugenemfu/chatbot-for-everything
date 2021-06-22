@@ -74,9 +74,11 @@ class DashaHandler(StateHandler):
         else:
             if self.users[user_id].attempts < len(df):
                 ans = (
-                    f"Предлагаю попробовать {self.df.name.tolist()[self.users[user_id].attempts]}. На Vivino у него рейтинг "
+                    f"Предлагаю попробовать {self.df.name.tolist()[self.users[user_id].attempts]}.\n\n"
+                    f"На Vivino у него рейтинг "
                     f"{self.df.rating.tolist()[self.users[user_id].attempts]} – это самое лучшее, что я смог найти в "
-                    f"данной ценовой категории. Заказать за {self.df.price.tolist()[self.users[user_id].attempts]} рублей и "
+                    f"данной ценовой категории.\n\n"
+                    f"Заказать за {self.df.price.tolist()[self.users[user_id].attempts]} рублей и "
                     f"подробнее ознакомиться с характеристиками можно здесь: "
                     f"{self.df.url.tolist()[self.users[user_id].attempts]}.\n\nПо этому запросу вина еще будем смотреть?"
                 )
