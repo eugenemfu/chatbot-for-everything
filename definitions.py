@@ -7,7 +7,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 WEATHER_API = "https://api.weather.yandex.ru/v2/forecast?"
 
-CHGK_MODEL_PATH = "data/models/new_data/"
+CHGK_MODEL_PATH = "data/models/blitz/"
 TOKENIZER_PATH = "sberbank-ai/rugpt3small_based_on_gpt2"
 
 
