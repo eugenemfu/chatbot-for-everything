@@ -1,6 +1,6 @@
 import abc
 
-from typing import Tuple, Iterable
+from typing import Tuple, Optional
 from telegram import Update
 from telegram.ext import CallbackContext
 from definitions import BOT_STATE, BotVocabulary
@@ -40,7 +40,7 @@ class StateHandler(metaclass=abc.ABCMeta):
     def __init__(self, state_id: int):
         self.state_id = state_id
 
-    def __call__(self, update: Update, context: CallbackContext) -> int:
+    def __call__(self, update: Update, context: CallbackContext) -> Optional[int]:
         """
         Each handler is supposed to get a user message from updater, run generate_answer function
          to get an answer and next state id and then return the next state id.

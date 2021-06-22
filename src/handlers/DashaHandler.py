@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import random
 
-from typing import Tuple, List, Union
+from typing import Tuple, List, Union, Optional
 from pathlib import Path
 
 from definitions import BOT_STATE, ROOT_DIR, BotVocabulary
@@ -101,7 +101,8 @@ class DashaHandler(StateHandler):
 
         elif self.checkpoint == 1:
             types = lemmatize_list(AvailableOption.TYPES.value.user_name)
-            msg = lemmatize(msg)
+            if isinstance(msg, str):
+                msg = lemmatize(msg)
             for word in msg:
                 if word in types:
                     self.wine_type = WineBotInterpreter.define_wine_type(msg)
@@ -116,7 +117,8 @@ class DashaHandler(StateHandler):
 
         elif self.checkpoint == 2:
             countries = lemmatize_list(AvailableOption.COUNTRIES.value.user_name)
-            msg = lemmatize(msg)
+            if isinstance(msg, str):
+                msg = lemmatize(msg)
             for word in msg:
                 if word in countries:
                     self.wine_country = WineBotInterpreter.define_wine_country(word)
@@ -130,6 +132,8 @@ class DashaHandler(StateHandler):
             return BOT_STATE.DASHA_DOMAIN, answer
 
         elif self.checkpoint == 3:
+            if isinstance(msg, List):
+                msg = msg[0]
             try:
                 msg = int(msg)
                 if msg > 0:
