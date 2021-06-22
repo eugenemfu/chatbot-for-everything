@@ -1,2 +1,9 @@
-# chatbot-for-everything
-Bot's name -- HSE Booker
+# Chatbot for everything
+
+Имя: HSE Booker, t.me/hse_booker_bot
+
+Возможности:
+
+* Генерирует вопросы в стиле ЧГК, используя начало вопроса.
+* Предлагает вино на основе нескольких параметров.
+* Говорит прогноз погоды в любом городе.
