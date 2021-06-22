@@ -62,7 +62,7 @@ class WineBotInterpreter(object):
         elif word in WineCountry.MEXICO.value.user_name:
             if not full_name:
                 return WineCountry.MEXICO.value.api_short_code
-            return WineType.MEXICO.value.api_long_name
+            return WineCountry.MEXICO.value.api_long_name
 
         elif word in WineCountry.NEW_ZEALAND.value.user_name:
             if not full_name:

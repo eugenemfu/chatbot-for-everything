@@ -1,5 +1,3 @@
-import emoji
-
 from dataclasses import dataclass
 from enum import Enum, unique
 from typing import List, Union
@@ -152,13 +150,6 @@ class AvailableOption(Enum):
         ["К сожалению, кроме цитаты дня мне больше нечего предложить по этому запросу:"],
         ["Посмотреть еще?", "Смотрим дальше?", "Показать другое?", "Будем дальше смотреть?"],
     )
-
-
-@unique
-class SweetnessDetector(Enum):
-    SWEET = ArgumentInfo(["сладко", "сладкий", "сладость"], ["sweet"])
-
-    DRY = ArgumentInfo(["сухой"], ["dry"])
 
 
 @unique
