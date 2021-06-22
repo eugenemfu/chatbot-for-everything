@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict, Tuple
 
 from src.handlers.handlers import StateHandler
 from util import lemmatize
@@ -13,7 +13,7 @@ class DomainHandler(StateHandler):
                          'kirill': KeyWords.KIRILL.value,
                          'dasha': KeyWords.DASHA.value}
 
-    def generate_answer(self, msg: str, user_id: int) -> tuple[int, str]:
+    def generate_answer(self, msg: str, user_id: int) -> Tuple[int, str]:
         lemmas = lemmatize(msg)
 
         weather, kirill, dasha = [False] * 3
@@ -25,9 +25,9 @@ class DomainHandler(StateHandler):
             if word in self.keywords['dasha']:
                 dasha = True
         if weather + kirill + dasha > 1:
-            return self.state_id, 'Переформулируй, пожалуйста, я не понял'
+            return self.state_id, BotVocabulary.ASK.value
         if weather + kirill + dasha == 0:
-            return self.state_id, 'Чем я могу помочь? Если хочешь узнать, что я умею, нажми /help.'
+            return self.state_id, BotVocabulary.ASK_HELP.value
 
         if kirill:
             next_state, ans = self.handlers[BOT_STATE.KIRILL_DOMAIN].generate_answer(msg, user_id)
