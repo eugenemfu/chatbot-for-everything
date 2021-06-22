@@ -33,7 +33,7 @@
    
        git clone https://github.com/eugenemfu/chatbot-for-everything.git
 
-2. Созадать в корне проекта файл: `tokens.py` 
+2. Создать в корне проекта файл: `tokens.py` 
 
 3. В файле `tokens.py` прописать:
    
