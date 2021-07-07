@@ -30,6 +30,12 @@ class SpecialTokens(Enum):
 
 
 @unique
+class HelloBye(Enum):
+    HELLO = 0
+    BYE = 1
+
+
+@unique
 class KeyWords(Enum):
     THANKS = ['спасибо', 'спасибки', 'спасиб', 'thank', 'thanks']
     WEATHER = ['weather', 'погода', 'градус', 'улица']
